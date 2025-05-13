@@ -1,0 +1,8 @@
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="400" fill="#f5f8fa"/>
+  <rect x="50" y="50" width="700" height="300" rx="10" fill="#fff" stroke="#1976d2" stroke-width="2"/>
+  <text x="400" y="180" font-family="Arial" font-size="24" text-anchor="middle" fill="#1976d2">Medical Image Analysis Dashboard</text>
+  <text x="400" y="220" font-family="Arial" font-size="16" text-anchor="middle" fill="#757575">Screenshot will appear here after deployment</text>
+  <rect x="200" y="250" width="400" height="40" rx="5" fill="#1976d2"/>
+  <text x="400" y="275" font-family="Arial" font-size="16" text-anchor="middle" fill="#fff">Analyze Medical Images with AI</text>
+</svg> 
