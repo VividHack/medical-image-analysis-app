@@ -40,46 +40,82 @@ def prepare_image(image_path):
     return img_tensor
 
 # Generate Grad-CAM heatmap
-def generate_gradcam(model, img_tensor, target_layer):
-    # Save original gradients
+def generate_gradcam(model, img_tensor, target_layer_name):
     gradients = []
-    
+    activations_list = [] # Changed from 'activations' to avoid potential name clashes
+
     # Hook for gradients
-    def save_gradient(grad):
-        gradients.append(grad)
+    def backward_hook_fn(module, grad_input, grad_output):
+        gradients.append(grad_output[0])
+
+    # Hook for activations
+    def forward_hook_fn(module, input, output):
+        activations_list.append(output)
+
+    # Find the target layer module
+    target_module = None
+    for name, module_item in model.named_modules():
+        if name == target_layer_name:
+            target_module = module_item
+            break
     
-    # Get the target layer's output
-    for name, module in model.named_modules():
-        if name == target_layer:
-            module.register_backward_hook(save_gradient)
-    
-    # Forward pass
-    output = model(img_tensor)
-    pred_class = output.argmax().item()
-    
-    # Zero gradients
-    model.zero_grad()
-    
-    # Backward pass with the predicted class
-    output[0, pred_class].backward()
-    
-    # Get gradients and activations
-    gradients = gradients[0].cpu().data.numpy()[0]
-    activations = getattr(model, target_layer.split('.')[0])[int(target_layer.split('.')[1])].activations.cpu().data.numpy()[0]
-    
-    # Global average pooling
-    weights = np.mean(gradients, axis=(1, 2))
-    
-    # Generate heatmap
-    heatmap = np.zeros((activations.shape[1], activations.shape[2]), dtype=np.float32)
-    for i, w in enumerate(weights):
-        heatmap += w * activations[i, :, :]
-    
-    heatmap = np.maximum(heatmap, 0)
-    heatmap = (heatmap - heatmap.min()) / (heatmap.max() - heatmap.min() + 1e-10)
-    heatmap = np.uint8(255 * heatmap)
-    
-    return heatmap
+    if target_module is None:
+        raise ValueError(f"Target layer '{target_layer_name}' not found in model.")
+
+    # Register hooks
+    # Use try-finally to ensure hooks are removed
+    forward_handle = target_module.register_forward_hook(forward_hook_fn)
+    backward_handle = target_module.register_backward_hook(backward_hook_fn) 
+
+    heatmap_generated = None # Initialize to ensure it's defined for return
+    try:
+        # Forward pass to trigger hooks and get output
+        output = model(img_tensor)
+        
+        if not activations_list:
+             raise RuntimeError(f"Forward hook for activations on layer '{target_layer_name}' did not run or list is empty.")
+        
+        pred_class = output.argmax().item()
+        
+        model.zero_grad()
+        # Backward pass with the predicted class to trigger gradient hook
+        output[0, pred_class].backward()
+
+        if not gradients:
+            raise RuntimeError(f"Backward hook for gradients on layer '{target_layer_name}' did not run or list is empty.")
+
+        # Get the hooked activations and gradients (using .detach() to be safe)
+        act = activations_list[0].cpu().detach().numpy()[0]  # Assuming batch size 1, result shape: (C, H, W)
+        grad = gradients[0].cpu().detach().numpy()[0]    # Assuming batch size 1, result shape: (C, H, W)
+
+        # Global average pooling on gradients to get weights for channels
+        weights = np.mean(grad, axis=(1, 2))  # Shape: (C,)
+        
+        # Weighted sum of activation maps (CAM)
+        cam = np.zeros(act.shape[1:], dtype=np.float32) # Shape: (H, W)
+        for i, w_val in enumerate(weights):
+            cam += w_val * act[i, :, :]
+        
+        # Apply ReLU to the CAM
+        cam = np.maximum(cam, 0)
+        
+        # Normalize CAM to 0-1 range for visualization
+        if (np.max(cam) - np.min(cam)) > 1e-10 : # Avoid division by zero if cam is flat or all zeros
+            cam = (cam - np.min(cam)) / (np.max(cam) - np.min(cam))
+        else:
+            cam = np.zeros_like(cam) # Or assign cam / (np.max(cam) + 1e-10)
+
+        heatmap_generated = np.uint8(255 * cam)
+        
+    finally:
+        # Always remove hooks
+        forward_handle.remove()
+        backward_handle.remove()
+            
+    if heatmap_generated is None:
+        raise RuntimeError("Heatmap generation failed unexpectedly before returning.")
+
+    return heatmap_generated
 
 # Save heatmap overlay
 def save_heatmap(image_path, heatmap, save_dir="app/public/images/heatmaps"):

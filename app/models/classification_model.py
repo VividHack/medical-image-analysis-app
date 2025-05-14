@@ -10,16 +10,6 @@ class MedicalImageClassifier(nn.Module):
         # Load a pre-trained ResNet-50 model
         self.resnet = models.resnet50(weights='IMAGENET1K_V1' if pretrained else None)
         
-        # Save activations for Grad-CAM
-        self.activations = None
-        
-        # Register hook to save activations
-        def save_activation(module, input, output):
-            self.activations = output
-        
-        # Register the hook on the last convolutional layer
-        self.resnet.layer4.register_forward_hook(save_activation)
-        
         # Replace the final fully connected layer to match our number of classes
         in_features = self.resnet.fc.in_features
         self.resnet.fc = nn.Sequential(

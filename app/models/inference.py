@@ -2,7 +2,7 @@ import os
 import torch
 import numpy as np
 
-from app.models.classification_model import load_model as load_classifier
+from app.models.classification_model import MedicalImageClassifier, load_model as load_classifier
 from app.models.segmentation_model import load_model as load_segmenter
 from app.utils.image_processing import (
     prepare_image, 
@@ -30,33 +30,37 @@ class MedicalImageAnalyzer:
         self.segmenter = None
         
         if os.path.exists(self.classifier_path):
+            # load_classifier internally uses MedicalImageClassifier(pretrained=False)
+            # and then loads the state_dict from classifier_path
             self.classifier = load_classifier(self.classifier_path, self.device)
-            print("INFO: Custom classifier loaded successfully.")
+            print(f"INFO: Custom classifier loaded successfully from {self.classifier_path}")
         else:
-            print("WARNING: Classifier model weights not found at", self.classifier_path)
-            print("INFO: Proceeding without a classifier. Analysis will be mocked.")
+            print(f"WARNING: Classifier model weights not found at {self.classifier_path}")
+            print("INFO: Initializing classifier with pre-trained ImageNet weights (ResNet50).")
+            try:
+                # MedicalImageClassifier uses pretrained=True by default for ResNet50 backbone
+                self.classifier = MedicalImageClassifier(num_classes=len(CLASS_LABELS), pretrained=True).to(self.device)
+                self.classifier.eval() # Set to evaluation mode
+                print("INFO: Default ResNet50 based classifier initialized successfully.")
+            except Exception as e:
+                print(f"ERROR: Failed to initialize default classifier: {e}")
+                self.classifier = None # Ensure classifier is None if initialization fails
 
         if os.path.exists(self.segmenter_path):
             self.segmenter = load_segmenter(self.segmenter_path, self.device)
-            print("INFO: Custom segmenter loaded successfully.")
+            print(f"INFO: Custom segmenter loaded successfully from {self.segmenter_path}")
         else:
-            print("WARNING: Segmenter model weights not found at", self.segmenter_path)
-            print("INFO: Proceeding without a segmenter.")
+            print(f"WARNING: Segmenter model weights not found at {self.segmenter_path}")
+            print("INFO: Proceeding without a segmenter. Segmentation will be skipped if applicable.")
     
     def analyze_image(self, image_path):
         """
         Analyze a medical image for classification, segmentation, and heatmap
         """
-        # Check if models are available
+        # Check if classifier is available
         if self.classifier is None:
-            print("WARNING: Classifier model not loaded. Returning mocked analysis.")
-            return {
-                "prediction": "Not Available (Model Not Loaded)",
-                "confidence": 0.0,
-                "uncertainty": 0.0,
-                "segmentation_path": None,
-                "heatmap_path": None
-            }
+            # This state indicates a failure during __init__ to load or initialize a classifier.
+            raise ValueError("Classifier model is not available. Check logs for initialization errors.")
         
         # Prepare image tensor
         img_tensor = prepare_image(image_path)
