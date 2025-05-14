@@ -1,13 +1,15 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # Replace with environment variables in production
-DATABASE_URL = "sqlite:///./app.db"  # Use PostgreSQL in production
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./app.db")  # Use PostgreSQL in production by setting the env var
 
 # Create SQLAlchemy engine
 engine = create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}  # Only needed for SQLite
+    DATABASE_URL, 
+    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {} # Only needed for SQLite
 )
 
 # Create session factory
