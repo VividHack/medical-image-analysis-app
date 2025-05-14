@@ -31,9 +31,17 @@ class MedicalImageAnalyzer:
         
         if os.path.exists(self.classifier_path):
             self.classifier = load_classifier(self.classifier_path, self.device)
-        
+            print("INFO: Custom classifier loaded successfully.")
+        else:
+            print("WARNING: Classifier model weights not found at", self.classifier_path)
+            print("INFO: Proceeding without a classifier. Analysis will be mocked.")
+
         if os.path.exists(self.segmenter_path):
             self.segmenter = load_segmenter(self.segmenter_path, self.device)
+            print("INFO: Custom segmenter loaded successfully.")
+        else:
+            print("WARNING: Segmenter model weights not found at", self.segmenter_path)
+            print("INFO: Proceeding without a segmenter.")
     
     def analyze_image(self, image_path):
         """
@@ -41,7 +49,14 @@ class MedicalImageAnalyzer:
         """
         # Check if models are available
         if self.classifier is None:
-            raise ValueError("Classifier model not loaded. Please train or provide a model first.")
+            print("WARNING: Classifier model not loaded. Returning mocked analysis.")
+            return {
+                "prediction": "Not Available (Model Not Loaded)",
+                "confidence": 0.0,
+                "uncertainty": 0.0,
+                "segmentation_path": None,
+                "heatmap_path": None
+            }
         
         # Prepare image tensor
         img_tensor = prepare_image(image_path)
@@ -61,6 +76,8 @@ class MedicalImageAnalyzer:
             mask = self.segmenter.predict(img_tensor)
             mask_np = mask.cpu().numpy()[0, 0]  # Get the mask as a numpy array
             segmentation_path = save_segmentation(mask_np)
+        elif self.segmenter is None and class_idx > 0:
+            print("INFO: Segmentation skipped as segmenter model is not loaded.")
         
         # Generate heatmap
         grad_cam_layer = self.classifier.get_gradcam_layer()

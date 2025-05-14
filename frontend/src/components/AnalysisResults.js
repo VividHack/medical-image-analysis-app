@@ -84,7 +84,7 @@ const AnalysisResults = ({ results }) => {
               
               <ConfidenceIndicator confidence={confidence} />
               
-              <Box sx={{ mt: 2 }}>
+              {/* <Box sx={{ mt: 2 }}>
                 <Typography variant="body2" color="text.secondary">
                   {isPositive ? (
                     'The analysis indicates the presence of abnormalities that may suggest a pathological condition. Please consult a healthcare professional for proper diagnosis.'
@@ -92,7 +92,7 @@ const AnalysisResults = ({ results }) => {
                     'The analysis suggests no significant abnormalities. Regular check-ups are still recommended.'
                   )}
                 </Typography>
-              </Box>
+              </Box> */}
             </CardContent>
           </Card>
         </Grid>

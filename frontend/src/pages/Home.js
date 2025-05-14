@@ -99,19 +99,6 @@ const Home = () => {
                 </Box>
               )}
             </Grid>
-            <Grid item xs={12} md={5}>
-              <Box 
-                component="img"
-                src="/static/hero-image.png"
-                alt="AI analyzing a medical image"
-                sx={{
-                  width: '100%',
-                  maxHeight: 300,
-                  objectFit: 'contain',
-                  display: { xs: 'none', md: 'block' }
-                }}
-              />
-            </Grid>
           </Grid>
         </Container>
       </Box>
