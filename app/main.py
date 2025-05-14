@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
+import os
 
 from app.api import authentication, predictions, users
 from app.database import engine, Base
@@ -12,9 +13,15 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Medical Image Analysis API")
 
 # Configure CORS
+# In production, replace with specific origins of your frontend application
+frontend_url = os.getenv("FRONTEND_URL")
+allow_origins = ["http://localhost:3000"] # local frontend development
+if frontend_url:
+    allow_origins.append(frontend_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
