@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app/backend
+    environment:
+      - DATABASE_URL=sqlite:///./backend.db
+      - SECRET_KEY=your_secret_key_here_change_in_production
+      - FRONTEND_URL=http://localhost:3000
+    # Uncomment if using AWS services in local development
+    # - AWS_ACCESS_KEY_ID=your_access_key
+    # - AWS_SECRET_ACCESS_KEY=your_secret_key
+    # - S3_MODEL_BUCKET=your_bucket_name
+    # - S3_CLASSIFIER_KEY=classifier.pth
+    # - S3_SEGMENTER_KEY=segmenter.pth 
