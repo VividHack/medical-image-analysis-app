@@ -42,17 +42,17 @@ frontend/.env.production.local
 *.pt
 *.h5
 *.ckpt
-app/models/weights/
+backend/models/weights/
 
 # Data
-app/data/
+backend/data/
 *.csv
 *.json
 
 # Images
-app/public/images/uploads/
-app/public/images/heatmaps/
-app/public/images/segmentations/
+backend/public/images/uploads/
+backend/public/images/heatmaps/
+backend/public/images/segmentations/
 
 # Database
 *.db

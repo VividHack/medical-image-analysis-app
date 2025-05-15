@@ -4,9 +4,9 @@ import numpy as np
 import boto3
 from botocore.exceptions import ClientError
 
-from app.models.classification_model import MedicalImageClassifier, load_model as load_classifier
-from app.models.segmentation_model import load_model as load_segmenter
-from app.utils.image_processing import (
+from backend.models.classification_model import MedicalImageClassifier, load_model as load_classifier
+from backend.models.segmentation_model import load_model as load_segmenter
+from backend.utils.image_processing import (
     prepare_image, 
     generate_gradcam,
     save_heatmap,
@@ -76,7 +76,7 @@ class MedicalImageAnalyzer:
         
         if not classifier_ready:
             # Fallback to local file system path if S3 not configured or failed
-            legacy_classifier_path = os.path.join("app", "models", "weights", "classifier.pth")
+            legacy_classifier_path = os.path.join("backend", "models", "weights", "classifier.pth")
             if os.path.exists(legacy_classifier_path):
                 try:
                     self.classifier = load_classifier(legacy_classifier_path, self.device)
@@ -110,7 +110,7 @@ class MedicalImageAnalyzer:
 
         if not segmenter_ready:
             # Fallback to local file system path if S3 not configured or failed
-            legacy_segmenter_path = os.path.join("app", "models", "weights", "segmenter.pth")
+            legacy_segmenter_path = os.path.join("backend", "models", "weights", "segmenter.pth")
             if os.path.exists(legacy_segmenter_path):
                 try:
                     self.segmenter = load_segmenter(legacy_segmenter_path, self.device)

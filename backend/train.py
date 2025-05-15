@@ -8,8 +8,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-from app.models.classification_model import MedicalImageClassifier
-from app.models.segmentation_model import UNet
+from backend.models.classification_model import MedicalImageClassifier
+from backend.models.segmentation_model import UNet
 
 # Training configuration
 CONFIG = {
@@ -18,19 +18,19 @@ CONFIG = {
         "learning_rate": 0.001,
         "epochs": 20,
         "num_classes": 2,
-        "model_save_path": os.path.join("app", "models", "weights", "classifier.pth")
+        "model_save_path": os.path.join("backend", "models", "weights", "classifier.pth")
     },
     "segmenter": {
         "batch_size": 16,
         "learning_rate": 0.001,
         "epochs": 30,
-        "model_save_path": os.path.join("app", "models", "weights", "segmenter.pth")
+        "model_save_path": os.path.join("backend", "models", "weights", "segmenter.pth")
     },
     "data": {
-        "train_dir": os.path.join("app", "data", "train"),
-        "val_dir": os.path.join("app", "data", "val"),
-        "segmentation_train_dir": os.path.join("app", "data", "segmentation", "train"),
-        "segmentation_val_dir": os.path.join("app", "data", "segmentation", "val")
+        "train_dir": os.path.join("backend", "data", "train"),
+        "val_dir": os.path.join("backend", "data", "val"),
+        "segmentation_train_dir": os.path.join("backend", "data", "segmentation", "train"),
+        "segmentation_val_dir": os.path.join("backend", "data", "segmentation", "val")
     }
 }
 

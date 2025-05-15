@@ -29,7 +29,7 @@ source venv/bin/activate
 
 # Install Python dependencies
 echo "Installing Python dependencies..."
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
 
 # Install frontend dependencies
 echo "Installing frontend dependencies..."
@@ -49,7 +49,7 @@ trap cleanup EXIT INT TERM
 
 # Start backend server
 echo "Starting backend server..."
-python run.py &
+python backend/main.py &
 BACKEND_PID=$!
 
 # Start frontend server

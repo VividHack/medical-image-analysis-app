@@ -25,7 +25,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the application source code into the container
 # This copies the 'app' directory from your project root (the build context)
 # into the '$APP_HOME/app' directory inside the image.
-COPY ./app ./app
+COPY . ./app
 
 # Expose the port the app runs on
 EXPOSE 8000

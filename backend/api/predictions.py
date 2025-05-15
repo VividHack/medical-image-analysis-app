@@ -3,15 +3,15 @@ from sqlalchemy.orm import Session
 from typing import List
 import os
 
-from app.database import get_db
-from app.models.database_models import User, Prediction
-from app.models.schemas import (
+from backend.database import get_db
+from backend.models.database_models import User, Prediction
+from backend.models.schemas import (
     Prediction as PredictionSchema,
     PredictionResponse
 )
-from app.utils.auth import get_current_active_user
-from app.utils.image_processing import save_uploaded_image
-from app.models.inference import analyzer
+from backend.utils.auth import get_current_active_user
+from backend.utils.image_processing import save_uploaded_image
+from backend.models.inference import analyzer
 
 router = APIRouter()
 

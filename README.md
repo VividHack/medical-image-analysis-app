@@ -72,14 +72,14 @@ The application follows a modern, full-stack architecture:
 
 4. Create necessary directories:
    ```
-   mkdir -p app/public/images/uploads app/public/images/heatmaps app/public/images/segmentations app/models/weights
+   mkdir -p backend/public/images/uploads backend/public/images/heatmaps backend/public/images/segmentations backend/models/weights
    ```
 
 ### Running the Application
 
 1. Start the backend server:
    ```
-   uvicorn app.main:app --reload
+   uvicorn backend.main:app --reload
    ```
 
 2. In a separate terminal, start the frontend:
@@ -108,7 +108,7 @@ The application includes training scripts for the deep learning models. To train
 1. Download the dataset (e.g., [ChestX-ray14](https://nihcc.app.box.com/v/ChestXray-NIHCC))
 2. Organize data in the following structure:
    ```
-   app/data/
+   backend/data/
      ├── train/
      │   ├── normal/
      │   └── pneumonia/
@@ -118,7 +118,7 @@ The application includes training scripts for the deep learning models. To train
    ```
 3. Run the training script:
    ```
-   python -m app.train
+   python -m backend.train
    ```
 
 ## Deployment on AWS

@@ -7,10 +7,10 @@ import shutil
 # Create directories
 def create_directories():
     """Create necessary directories for data"""
-    os.makedirs("app/data/train/normal", exist_ok=True)
-    os.makedirs("app/data/train/pneumonia", exist_ok=True)
-    os.makedirs("app/data/val/normal", exist_ok=True)
-    os.makedirs("app/data/val/pneumonia", exist_ok=True)
+    os.makedirs("backend/data/train/normal", exist_ok=True)
+    os.makedirs("backend/data/train/pneumonia", exist_ok=True)
+    os.makedirs("backend/data/val/normal", exist_ok=True)
+    os.makedirs("backend/data/val/pneumonia", exist_ok=True)
     print("Created data directories")
 
 # Download a small sample of chest X-ray data from GitHub
@@ -32,8 +32,8 @@ def download_sample_data():
         # Move a few sample images to our data directories
         # Note: These paths need to be adapted based on the actual downloaded dataset structure
         sample_paths = [
-            ("temp_data/covid-chestxray-dataset-master/images/", "app/data/train/pneumonia/", 5),
-            ("temp_data/covid-chestxray-dataset-master/images/", "app/data/val/pneumonia/", 2),
+            ("temp_data/covid-chestxray-dataset-master/images/", "backend/data/train/pneumonia/", 5),
+            ("temp_data/covid-chestxray-dataset-master/images/", "backend/data/val/pneumonia/", 2),
         ]
         
         for source_dir, dest_dir, count in sample_paths:
@@ -48,11 +48,11 @@ def download_sample_data():
         
         for i in range(5):
             img = np.ones((224, 224, 3), dtype=np.uint8) * 240  # Light gray image
-            Image.fromarray(img).save(f"app/data/train/normal/normal_{i}.png")
+            Image.fromarray(img).save(f"backend/data/train/normal/normal_{i}.png")
         
         for i in range(2):
             img = np.ones((224, 224, 3), dtype=np.uint8) * 240  # Light gray image
-            Image.fromarray(img).save(f"app/data/val/normal/normal_{i}.png")
+            Image.fromarray(img).save(f"backend/data/val/normal/normal_{i}.png")
         
         print("Sample data downloaded and organized.")
     except Exception as e:
@@ -65,4 +65,4 @@ def download_sample_data():
 if __name__ == "__main__":
     create_directories()
     download_sample_data()
-    print("Finished. You can now train the model with: python -m app.train") 
+    print("Finished. You can now train the model with: python -m backend.train") 

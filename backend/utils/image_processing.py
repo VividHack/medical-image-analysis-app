@@ -16,7 +16,7 @@ def get_transform():
     ])
 
 # Save uploaded image to disk
-def save_uploaded_image(file, upload_dir="app/public/images/uploads"):
+def save_uploaded_image(file, upload_dir="backend/public/images/uploads"):
     os.makedirs(upload_dir, exist_ok=True)
     
     # Generate a unique filename
@@ -118,7 +118,7 @@ def generate_gradcam(model, img_tensor, target_layer_name):
     return heatmap_generated
 
 # Save heatmap overlay
-def save_heatmap(image_path, heatmap, save_dir="app/public/images/heatmaps"):
+def save_heatmap(image_path, heatmap, save_dir="backend/public/images/heatmaps"):
     os.makedirs(save_dir, exist_ok=True)
     
     # Generate unique filename
@@ -144,7 +144,7 @@ def save_heatmap(image_path, heatmap, save_dir="app/public/images/heatmaps"):
     return save_path
 
 # Save segmentation mask
-def save_segmentation(mask_array, save_dir="app/public/images/segmentations"):
+def save_segmentation(mask_array, save_dir="backend/public/images/segmentations"):
     os.makedirs(save_dir, exist_ok=True)
     
     # Generate unique filename

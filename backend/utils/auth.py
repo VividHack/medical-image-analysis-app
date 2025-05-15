@@ -7,9 +7,9 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
-from app.database import get_db
-from app.models.database_models import User
-from app.models.schemas import TokenData
+from backend.database import get_db
+from backend.models.database_models import User
+from backend.models.schemas import TokenData
 
 # Replace with environment variables in production
 # It is CRITICAL that this is a strong, unique key set via an environment variable in production.

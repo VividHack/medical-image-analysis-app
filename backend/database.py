@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # Replace with environment variables in production
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./app.db")  # Use PostgreSQL in production by setting the env var
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./backend.db")  # Use PostgreSQL in production by setting the env var
 
 # Create SQLAlchemy engine
 engine = create_engine(
